@@ -1,0 +1,140 @@
+import math
+import tkinter
+from tkinter import messagebox
+
+class Calculator():
+    tool_name = '简易计算器'
+    def __init__(self, title='计算器', root_size=(320, 420),  **kwargs):
+        # 基本界面
+        self.root = tkinter.Tk()
+        self.root.resizable(width=False, height=False)
+        self.root.configure(bg = '#CDCDCD')
+        # self.root.attributes('-alpha', 0.8)
+        self.root.minsize(*root_size)
+        self.root.title(title)
+        self.current_show = tkinter.StringVar()
+        self.current_show.set('0')
+        self.storage = []
+        self.is_calculate = False
+        self.MulTimes = False
+
+    def SMulTimes(self):
+        if self.MulTimes :
+            self.storage.append(self.current_show.get())
+            expression1 = ''.join(self.storage)
+            result1 = eval(expression1)
+            self.current_show.set(result1)
+            self.is_calculate = True
+            self.MulTimes = False
+
+    def ClearCurrent(self):
+        self.current_show.set('0')
+
+    def reset(self):
+        self.storage.clear()
+        self.is_calculate = False
+        self.current_show.set('0')
+
+    def PressOperator(self,Operator):
+        if Operator in ['+', '-', '*', '/']:
+            self.SMulTimes()
+            self.storage.append(self.current_show.get())
+            self.storage.append(Operator)
+            self.is_calculate = True
+            self.MulTimes = True
+
+        elif Operator == '=':
+            if self.is_calculate:
+                self.current_show.set('0')
+            self.storage.append(self.current_show.get())
+            expression = ''.join(self.storage)
+            try:
+                result = eval(expression)
+            except:
+                result = 'illegal operation'
+            # result = self.modify(result)
+            self.current_show.set(result)
+            self.storage.clear()
+            self.is_calculate = True
+
+    def pressnumber(self, number):
+        if self.is_calculate:
+            self.current_show.set('0')
+            self.is_calculate = False
+
+        if self.current_show.get() == '0':
+            self.current_show.set(number)
+        else :
+            self.current_show.set(self.current_show.get() + number)
+
+    def DelNumber(self):
+        if len(self.current_show.get()) > 1:
+            self.current_show.set(self.current_show.get()[:-1])
+        else :
+            self.current_show.set('0')
+
+    def run(self):
+        lab1 = tkinter.Label(self.root, textvariable=self.current_show,  bg='#808080', anchor='e', bd=5, fg='white', font=('楷体', 20))
+        lab1.place(x=20, y=50, width=280, height=50)
+
+        button1_1 = tkinter.Button(text='C', fg='grey', bg='#666', bd=2, command=lambda: self.reset())
+        button1_1.place(x=20, y=110, width=50, height=35)
+
+        button1_4 = tkinter.Button(text='CE', fg='grey', bg='#bbbbbb', bd=2, command=lambda: self.ClearCurrent())
+        button1_4.place(x=192.5, y=110, width=50, height=35)
+
+        button1_5 = tkinter.Button(text='del', relief='raised', fg='grey', command=lambda:self.DelNumber())
+        button1_5.place(x=250, y=110, width=50, height=35)
+
+        button2_1 = tkinter.Button(text='8', fg='grey', bg='#bbbbbb', bd=2, command=lambda: self.pressnumber('8'))
+        button2_1.place(x=77.5, y=200, width=50, height=35)
+
+        button2_2 = tkinter.Button(text='9', fg='grey', bg='#bbbbbb', bd=2, command=lambda: self.pressnumber('9'))
+        button2_2.place(x=135, y=200, width=50, height=35)
+
+        button2_3 = tkinter.Button(text='7', fg='grey', bg='#bbbbbb', bd=2, command=lambda: self.pressnumber('7'))
+        button2_3.place(x=20, y=200, width=50, height=35)
+
+        button2_3 = tkinter.Button(text='4', fg='grey', bg='#bbbbbb', bd=2, command=lambda: self.pressnumber('4'))
+        button2_3.place(x=20, y=245, width=50, height=35)
+
+        button2_3 = tkinter.Button(text='5', fg='grey', bg='#bbbbbb', bd=2, command=lambda: self.pressnumber('5'))
+        button2_3.place(x=77.5, y=245, width=50, height=35)
+
+        button2_3 = tkinter.Button(text='6', fg='grey', bg='#bbbbbb', bd=2, command=lambda: self.pressnumber('6'))
+        button2_3.place(x=135, y=245, width=50, height=35)
+
+        button4_1 = tkinter.Button(text='1', fg='grey', bg='#bbbbbb', bd=2, command=lambda: self.pressnumber('1'))
+        button4_1.place(x=20, y=290, width=50, height=35)
+
+        button4_2 = tkinter.Button(text='2', fg='grey', bg='#bbbbbb', bd=2, command=lambda: self.pressnumber('2'))
+        button4_2.place(x=77.5, y=290, width=50, height=35)
+
+        button4_3 = tkinter.Button(text='3', fg='grey', bg='#bbbbbb', bd=2, command=lambda: self.pressnumber('3'))
+        button4_3.place(x=135, y=290, width=50, height=35)
+
+        button5_1 = tkinter.Button(text='0', fg='grey', bg='#bbbbbb', bd=2, command=lambda: self.pressnumber('0'))
+        button5_1.place(x=20, y=335, width=107.5, height=35)
+
+        button5_2 = tkinter.Button(text='.', fg='grey', bg='#bbbbbb', bd=2, command=lambda: self.pressnumber('0'))
+        button5_2.place(x=135, y=335, width=50, height=35)
+
+        button2_4 = tkinter.Button(text='*', relief='raised', fg='grey', command=lambda: self.PressOperator('*'))
+        button2_4.place(x=192.5, y=200, width=50, height=35)
+
+        button3_4 = tkinter.Button(text='/', relief='raised', fg='grey', command=lambda: self.PressOperator('/'))
+        button3_4.place(x=192.5, y=245, width=50, height=35)
+
+        button4_4 = tkinter.Button(text='+', relief='raised', fg='grey', command=lambda: self.PressOperator('+'))
+        button4_4.place(x=192.5, y=290, width=50, height=35)
+
+        button5_4 = tkinter.Button(text='-', relief='raised', fg='grey', command=lambda: self.PressOperator('-'))
+        button5_4.place(x=192.5, y=335, width=50, height=35)
+
+        button4_5 = tkinter.Button(text='=', relief='raised', fg='grey', command=lambda: self.PressOperator('='))
+        button4_5.place(x=250, y=290, width=50, height=80)
+
+        self.root.mainloop()
+
+a = Calculator()
+a.run()
